@@ -187,5 +187,15 @@ public class ASTPrinter extends ASTVisitor
         buffer.append('"');
         buffer.append( node.getSubstitutedValue( this::resolvePlaceholder ) );
         buffer.append('"');
-    }    
+    }
+    
+    public void setPrettyPrint(boolean prettyPrint)
+    {
+        this.prettyPrint = prettyPrint;
+    }
+    
+    public boolean isPrettyPrint()
+    {
+        return prettyPrint;
+    }
 }
