@@ -260,9 +260,18 @@ public class Parser
     
     private boolean parseNumber() {
 
-        if ( lexer.peek().is(TokenType.DIGITS ) ) 
+        if ( lexer.peek().is(TokenType.DIGITS ) || lexer.peek().is(TokenType.MINUS) ) 
         {
-            String v1 = lexer.next().value;
+            String v1  = "";
+            if ( lexer.peek().is(TokenType.MINUS) ) 
+            {
+                v1 = "-";
+                lexer.next();
+                if ( ! lexer.peek().is(TokenType.DIGITS) ) {
+                    throw new MyParseException("Expected digits but got "+lexer.peek(),lexer.peek().offset);
+                }
+            }
+            v1 += lexer.next().value;
             String v2 = null;
             if ( lexer.peek().is(TokenType.DOT ) ) 
             {

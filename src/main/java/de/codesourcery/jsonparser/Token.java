@@ -64,6 +64,7 @@ public class Token
         DIGITS, // ok
         TEXT, // ok
         BACKSLASH, // ok
+        MINUS,// ok
         EOF, // ok
         ANGLE_BRACKETS_OPEN, // ok
         ANGLE_BRACKETS_CLOSE, // ok

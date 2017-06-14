@@ -66,71 +66,29 @@ public class Lexer implements ILexer
             if ( Character.isWhitespace( c ) ) {
                 break;
             }
+            TokenType type = null;
             switch( c ) 
             {
-                case '.':
-                    parseBuffer(offset);
-                    offset = scanner.offset();
-                    scanner.next();
-                    token( TokenType.DOT , c , offset );
-                    return;
-                case ',':
-                    parseBuffer(offset);
-                    offset = scanner.offset();
-                    scanner.next();
-                    token( TokenType.COMMA, c , offset );
-                    return;   
-                case ':':
-                    parseBuffer(offset);
-                    offset = scanner.offset();
-                    scanner.next();
-                    token( TokenType.COLON, c , offset );
-                    return;                     
-                case '\\':
-                    parseBuffer(offset);
-                    offset = scanner.offset();
-                    scanner.next();
-                    token( TokenType.BACKSLASH, c , offset );
-                    return;
-                case '{':
-                    parseBuffer(offset);
-                    offset = scanner.offset();
-                    scanner.next();
-                    token( TokenType.CURLY_BRACE_OPEN, c , offset );
-                    return; 
-                case '[':
-                    parseBuffer(offset);
-                    offset = scanner.offset();
-                    scanner.next();
-                    token( TokenType.ANGLE_BRACKETS_OPEN, c , offset );
-                    return;  
-                case ']':
-                    parseBuffer(offset);
-                    offset = scanner.offset();
-                    scanner.next();
-                    token( TokenType.ANGLE_BRACKETS_CLOSE, c , offset );
-                    return;                      
-                case '}':
-                    parseBuffer(offset);
-                    offset = scanner.offset();
-                    scanner.next();
-                    token( TokenType.CURLY_BRACE_CLOSE, c , offset );
-                    return;     
-                case '$':
-                    parseBuffer(offset);
-                    offset = scanner.offset();
-                    scanner.next();
-                    token( TokenType.DOLLAR , c , offset );
-                    return;                         
-                case '"':
-                    parseBuffer(offset);
-                    offset = scanner.offset();
-                    scanner.next();
-                    token( TokenType.DOUBLE_QUOTE , c , offset );
-                    return;      
-                default:
-                    buffer.append( scanner.next() );
+                case '.': type = TokenType.DOT; break;
+                case '-': type = TokenType.MINUS; break;
+                case ',': type = TokenType.COMMA; break;
+                case ':': type = TokenType.COLON; break;
+                case '\\': type = TokenType.BACKSLASH; break;
+                case '{': type = TokenType.CURLY_BRACE_OPEN; break;
+                case '[': type = TokenType.ANGLE_BRACKETS_OPEN; break;
+                case ']': type = TokenType.ANGLE_BRACKETS_CLOSE; break;
+                case '}': type = TokenType.CURLY_BRACE_CLOSE; break;
+                case '$': type = TokenType.DOLLAR; break;
+                case '"': type = TokenType.DOUBLE_QUOTE; break;
             }
+            if ( type != null ) {
+                parseBuffer(offset);
+                offset = scanner.offset();
+                scanner.next();
+                token( type , c , offset );
+                return;
+            } 
+            buffer.append( scanner.next() );                
         }
         
         parseBuffer(offset);

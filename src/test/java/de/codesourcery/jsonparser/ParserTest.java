@@ -71,6 +71,8 @@ public class ParserTest {
         roundtrip("{\"a\":\"\"}");
         roundtrip("{\"a\":\"x\"}");
         roundtrip("{\"a\":1}");
+        roundtrip("{\"a\":-1}");
+        roundtrip("{\"a\":-1.5}");
         roundtrip("{\"a\":\"test\"}");
         roundtrip("{\"a\":1.1}");
         roundtrip("{\"a\":12.34}");
