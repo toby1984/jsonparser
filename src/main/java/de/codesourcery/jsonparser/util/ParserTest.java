@@ -21,6 +21,7 @@ import java.awt.Dimension;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -138,21 +139,19 @@ public class ParserTest extends JFrame
                 final Parser p = new Parser();
                 final ASTNode ast = p.parse( lexer );
                 treeModel.setRoot( ast );
-                final ASTPrinter printer = new ASTPrinter() 
+                
+                final Function<Identifier,String> resolver = name -> 
                 {
-                    @Override
-                    protected String resolvePlaceholder(Identifier name)
-                    {
-                        switch(name.name) {
-                            case "test1":
-                                return "test1";
-                            case "test2":
-                                return "test2";
-                        }
-                        return null;
+                    switch(name.name) {
+                        case "test1":
+                            return "test1";
+                        case "test2":
+                            return "test2";
                     }
+                    return null;                    
                 };
-                System.out.println( "PRINTED: "+printer.print( ast ) );
+                final ASTPrinter printer = new ASTPrinter(); 
+                System.out.println( "PRINTED: "+printer.print( ast , resolver ) );
             }
         });
         getContentPane().add(button, BorderLayout.CENTER );

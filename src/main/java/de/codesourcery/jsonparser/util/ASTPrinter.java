@@ -16,6 +16,7 @@
 package de.codesourcery.jsonparser.util;
 
 import java.util.Iterator;
+import java.util.function.Function;
 
 import de.codesourcery.jsonparser.Identifier;
 import de.codesourcery.jsonparser.ast.ASTNode;
@@ -34,9 +35,15 @@ public class ASTPrinter extends ASTVisitor
 
     private boolean prettyPrint = true;
     private int depth = 0;
+    private Function<Identifier,String> placeholderResolver;
 
-    public String print(ASTNode node) 
+    public String print(ASTNode node) {
+        return print(node,null);
+    }
+    
+    public String print(ASTNode node,Function<Identifier,String> placeholderResolver) 
     {
+        this.placeholderResolver = placeholderResolver == null ? id -> null : placeholderResolver;
         depth = 0;
         buffer.setLength( 0 );
         super.visit( node );
@@ -177,8 +184,8 @@ public class ASTPrinter extends ASTVisitor
         }
     }
 
-    protected String resolvePlaceholder(Identifier identifier) {
-        return null;
+    private String resolvePlaceholder(Identifier identifier) {
+        return placeholderResolver.apply( identifier );
     }
 
     @Override
