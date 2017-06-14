@@ -50,9 +50,14 @@ public class Parser
     public ASTNode parse(ILexer lexer) {
 
         this.lexer = lexer;
-
         stack.clear();
         parseObject();
+        if ( ! lexer.eof() ) {
+            throw new MyParseException("Garbage at end of input",lexer.peek().offset);
+        }
+        if ( stack.isEmpty() ) {
+            throw new MyParseException("Premature end of input",lexer.peek().offset);
+        }
         return stack.pop();
     }
 
@@ -107,10 +112,6 @@ public class Parser
                         {
                             stream.escaped = false;
                             switch( c ) {
-                                case '"':
-                                    break;
-                                case '\\':
-                                    break;
                                 case 'u':
                                     buffer.append( "\\u" );
                                     for ( int i = 0 ; i < 4 ; i++ ) 
@@ -125,28 +126,23 @@ public class Parser
                                         buffer.append(c);
                                     }
                                     continue;
-                                case '/':
-                                    break;
-                                case 'b':
-                                    buffer.append("\b");
-                                    continue;
-                                case 'f':
-                                    buffer.append("\f");
-                                    continue;                            
-                                case 'n':
-                                    buffer.append("\n");
-                                    continue;                            
-                                case 'r':
-                                    buffer.append("\r");
-                                    continue;
-                                case 't':
-                                    buffer.append("\t");
-                                    continue;            
                                 case '$':
                                     if ( supportsPlaceholders ) {
                                         buffer.append("$");
                                         continue;                                           
                                     }
+                                    throw new MyParseException("Invalid escape sequence" , stream.offset()-1 );                                    
+                                case '"':
+                                case '\\':
+                                case '/':
+                                case 'b':
+                                case 'f':
+                                case 'n':
+                                case 'r':
+                                case 't':
+                                    buffer.append("\\");
+                                    buffer.append( c );
+                                    continue;            
                                 default:
                                     throw new MyParseException("Invalid escape sequence" , stream.offset()-1 );
                             }
