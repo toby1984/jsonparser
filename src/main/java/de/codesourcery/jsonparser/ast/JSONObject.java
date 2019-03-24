@@ -15,6 +15,9 @@
  */
 package de.codesourcery.jsonparser.ast;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class JSONObject extends ASTNodeImpl
 {
     @Override

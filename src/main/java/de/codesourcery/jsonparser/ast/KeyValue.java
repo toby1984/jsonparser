@@ -15,15 +15,19 @@
  */
 package de.codesourcery.jsonparser.ast;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class KeyValue extends ASTNodeImpl
 {
-    public KeyValue(StringLiteral key,ASTNode value) 
+    public KeyValue(StringLiteral key,ASTNode value)
     {
         super.add( key );
         super.add( value );
     }
-    
-    public void add(ASTNode node) 
+
+    public void add(ASTNode node)
     {
         throw new UnsupportedOperationException();
     }
@@ -31,14 +35,14 @@ public class KeyValue extends ASTNodeImpl
     public StringLiteral key() {
         return (StringLiteral) children.get(0);
     }
-    
+
     public ASTNode value() {
         return children.get(1);
-    }    
-    
+    }
+
     @Override
     public String toString()
     {
         return child(0).toString()+" : "+child(1).toString();
-    }       
+    }
 }

@@ -15,8 +15,13 @@
  */
 package de.codesourcery.jsonparser.ast;
 
+import java.lang.reflect.Array;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public interface ASTNode
 {
@@ -43,5 +48,63 @@ public interface ASTNode
 
     public default int indexOf(ASTNode child) {
         return children().indexOf( child );
+    }
+
+    public default Object toJavaObject() {
+        return toJavaObject( this );
+    }
+
+    public static Object toJavaObject(ASTNode node)
+    {
+        if ( node instanceof StringLiteral ) {
+            return ((StringLiteral) node).value;
+        }
+        if ( node instanceof NullLiteral ) {
+            return null;
+        }
+        if ( node instanceof NumberLiteral ) {
+            final NumberLiteral num = (NumberLiteral) node;
+            if ( num.value.contains( "." ) )
+            {
+                return Double.parseDouble( num.value );
+            }
+            return Integer.parseInt( num.value );
+        }
+        if ( node instanceof BooleanLiteral ) {
+            return ((BooleanLiteral) node).value;
+        }
+        if ( node instanceof JSONArray ) {
+            final JSONArray array = (JSONArray) node;
+            final Object[] tmp = new Object[ array.childCount() ];
+            Set<Class<?>> componentClass = new HashSet<>();
+            final List<ASTNode> children1 = array.children();
+            for (int i = 0; i < children1.size(); i++)
+            {
+                final ASTNode child = children1.get( i );
+                final Object obj = child.toJavaObject();
+                componentClass.add( obj.getClass() );
+                tmp[i] = obj;
+            }
+            if ( componentClass.size() == 1 ) {
+                final Object result = Array.newInstance( componentClass.iterator().next(), tmp.length );
+                for ( int i = 0, len = tmp.length ; i < len ; i++ )
+                {
+                    Array.set( result, i, tmp[i] );
+                }
+                return result;
+            }
+            return tmp;
+        }
+        if ( node instanceof JSONObject )
+        {
+            final Map<String, Object> tmp = new HashMap<>();
+            for (ASTNode child : node.children())
+            {
+                final KeyValue kv = (KeyValue) child;
+                tmp.put( kv.key().value, kv.value().toJavaObject() );
+            }
+            return tmp;
+        }
+        throw new RuntimeException("Unhandled node type: "+node);
     }
 }
